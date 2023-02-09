@@ -143,13 +143,13 @@ restrict:
 economy:
   enable: false
   price: 500
-  server: ""
+#  server: ""
   refund: true
 ```
 
 `price`は1分あたりの料金です。
 
-`server`を設定するとプレイヤーの支払いや返金が指定したアカウントから出し入れされるようになります。
+~~`server`を設定するとプレイヤーの支払いや返金が指定したアカウントから出し入れされるようになります。~~
 
 `refund`は返金の設定です。`true`ならプレイヤーに返金、`false`なら返金しない、`payer`なら支払った人に返金されます。
 

@@ -13,9 +13,6 @@ import java.util.regex.Pattern;
 public class VaultEconomy {
     private final Economy economy;
 
-    private final DoubleConsumer serverD;
-    private final DoubleConsumer serverW;
-
     public VaultEconomy(MainConfig config) {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             throw new IllegalStateException("Vault not found");
@@ -27,23 +24,6 @@ public class VaultEconomy {
         }
 
         this.economy = rsp.getProvider();
-
-        var s = getOfflinePlayer(config.economy.server);
-        // 処理は共通でIFをすり替える
-        if (s == null) {
-            serverD = d -> {};
-            serverW = d -> {};
-        } else {
-            serverD = d -> this.economy.depositPlayer(s, d);
-            serverW = d -> {
-                if (this.economy.has(s, d)) {
-                    this.economy.withdrawPlayer(s, d);
-                } else if (this.economy.hasAccount(s)) {
-                    // あるだけ抜き取る
-                    this.economy.withdrawPlayer(s, this.economy.getBalance(s));
-                }
-            };
-        }
     }
 
     @SuppressWarnings("deprecation")
@@ -70,7 +50,6 @@ public class VaultEconomy {
             throw new IllegalArgumentException("amount is 0 or less: " + amount);
         }
 
-        serverW.accept(amount);
         // サーバーの残金がないからと言って特に何か出来るわけじゃない(どっちみち停止を要求されたflyは止める他ない)ので、あろうがなかろうが入金(返金)処理は続行する
         return economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
     }
@@ -82,7 +61,6 @@ public class VaultEconomy {
 
         if (economy.has(player, amount) &&
             economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS) {
-            serverD.accept(amount);
             return true;
         }
         return false;
