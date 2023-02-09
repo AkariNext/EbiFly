@@ -186,12 +186,10 @@ public class MainConfig {
 
     public static class EconomyConfig {
         public final double price;
-        public final String server;
         public final Boolean refund; // trueならself、falseならpayer
 
         private EconomyConfig(ConfigurationSection config) {
             price = config.getDouble("price");
-            server = config.getString("server");
             refund = triple(config.getString("refund"), "payer");
         }
     }

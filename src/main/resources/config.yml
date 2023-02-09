@@ -26,7 +26,6 @@ restrict:
 economy:
   enable: false
   price: 500 # per minute price
-  server: "" # Server account (Name or UUID, UUID is better.)
   refund: true # true/false/payer (Hint: 'payer' is refund to payer)
 
 notice:
