@@ -155,7 +155,7 @@ economy:
 
 ## 通知 (notice)
 
-飛行を有効にしたとき(`enable`)、無効にしたとき(`disable`)、時間切れが近い時(`timeout`)、支払いをした時(`payment`)にパーティクルを表示したり音を鳴らすための設定です。
+飛行を有効にしたとき(`enable`)、無効にしたとき(`disable`)、時間切れが近い時(`timeout`)、 ~~支払いをした時(`payment`)~~ にパーティクルを表示したり音を鳴らすための設定です。
 
 ```yml
 notice:
@@ -203,8 +203,8 @@ timeout:
     fadeIn: 0.5
     stay: 3.5
     fadeOut: 1
-payment:
-  position: actionbar
+#payment:
+#  position: actionbar
 ```
 
 `position`はメッセージ表示の位置を変更できます。自動で表示されるメッセージがチャットログを流してしまう事を防止します。

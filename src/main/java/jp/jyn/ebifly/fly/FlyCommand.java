@@ -35,7 +35,6 @@ public class FlyCommand implements TabExecutor {
     private final Boolean restrictLevitation;
     private final Consumer<Player> noticeEnable;
     private final Consumer<Player> noticeEnablePaid;
-    private final Consumer<Player> noticePayment;
 
     public FlyCommand(PluginMain plugin, MainConfig config, BukkitLocale<MessageConfig> message,
                       FlyRepository fly, VaultEconomy economy,
@@ -51,13 +50,12 @@ public class FlyCommand implements TabExecutor {
         restrictLevitation = config.restrictLevitation;
         if (isEconomyEnable()) {
             this.price = config.economy.price;
-            this.noticeEnablePaid = config.noticeEnable.merge(config.noticePayment);
+            this.noticeEnablePaid = config.noticeEnable.merge();
         } else {
             this.price = 0;
             this.noticeEnablePaid = config.noticeEnable.merge();
         }
         noticeEnable = config.noticeEnable.merge();
-        noticePayment = config.noticePayment.merge();
     }
 
     private boolean isEconomyEnable() {
@@ -231,19 +229,11 @@ public class FlyCommand implements TabExecutor {
             if (payer == null) {
                 noticeEnable.accept(recipient);
                 if (!self && sender instanceof Player pl) {
-                    noticePayment.accept(pl);
                 }
             } else if (self) {
                 noticeEnablePaid.accept(recipient);
             } else {
                 noticeEnable.accept(recipient);
-                noticePayment.accept(payer);
-            }
-        } else {
-            // クレジット追加時は常に追加した側/された側に支払い音を鳴らす(たとえ無料ユーザーでも)
-            noticePayment.accept(recipient);
-            if (!self && sender instanceof Player pl) {
-                noticePayment.accept(pl);
             }
         }
     }

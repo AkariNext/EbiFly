@@ -74,23 +74,6 @@ notice:
       fadeIn: 0.5
       stay: 28.5
       fadeOut: 1
-  payment:
-    position: actionbar # for persist flight payment.
-    particle:
-      type: BUBBLE_POP
-      count: 10
-      offset: { x: 0.5, y: 0.5, z: 0.5 }
-      extra: 0
-      global: true
-    sound:
-      type: BLOCK_BEACON_POWER_SELECT
-      volume: 1.0
-      pitch: 1.5
-      global: false
-    title:
-      fadeIn: 0.5
-      stay: 3.5
-      fadeOut: 1
 
 # Multi locale support.
 locale:

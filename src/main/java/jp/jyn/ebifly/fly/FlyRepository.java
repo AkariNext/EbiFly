@@ -42,7 +42,6 @@ public class FlyRepository implements EbiFly {
     private final Boolean refundType;
     private final Consumer<Player> noticeDisable;
     private final Consumer<Player> noticeTimeout;
-    private final Consumer<Player> noticePayment;
 
     public FlyRepository(MainConfig config, BukkitLocale<MessageConfig> message,
                          ScheduledExecutorService executor, VaultEconomy economy,
@@ -64,7 +63,6 @@ public class FlyRepository implements EbiFly {
 
         this.noticeDisable = config.noticeDisable.merge();
         this.noticeTimeout = config.noticeTimeout.merge();
-        this.noticePayment = economy == null ? ignore -> {} : config.noticePayment.merge();
     }
 
     private boolean isNotifyEnabled() {
@@ -171,7 +169,6 @@ public class FlyRepository implements EbiFly {
             if (economy.withdraw(player, price)) {
                 // 支払い完了、ﾏｲﾄﾞｱﾘｰ
                 m.persist.accept(player, () -> economy.format(price));
-                noticePayment.accept(player);
                 cs.addLast(new Credit(price, 1, player));
             } else {
                 // お金ないならｵﾁﾛｰ!

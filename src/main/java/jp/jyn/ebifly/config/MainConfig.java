@@ -42,8 +42,6 @@ public class MainConfig {
     public final NoticeConfig noticeEnable;
     public final NoticeConfig noticeDisable;
     public final NoticeConfig noticeTimeout;
-    public final NoticeConfig noticePayment;
-
     public final int noticeTimeoutSecond;
     public final NoticePosition noticeTimeoutPosition;
     public final NoticePosition noticePaymentPosition;
@@ -86,7 +84,6 @@ public class MainConfig {
         noticeEnable = new NoticeConfig(logger, getSection(logger, config, "notice.enable"));
         noticeDisable = new NoticeConfig(logger, getSection(logger, config, "notice.disable"));
         noticeTimeout = new NoticeConfig(logger, getSection(logger, config, "notice.timeout"));
-        noticePayment = new NoticeConfig(logger, getSection(logger, config, "notice.payment"));
 
         int second = config.getInt("notice.timeout.second");
         if (second > 60) {
