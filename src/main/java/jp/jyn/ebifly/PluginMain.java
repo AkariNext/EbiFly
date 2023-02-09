@@ -67,28 +67,6 @@ public class PluginMain extends JavaPlugin {
             );
         }
 
-        // バージョンチェッカー
-        Consumer<CommandSender> checker;
-        if (config.versionCheck) {
-            var v = new VersionChecker(this);
-            checker = v::check;
-
-            // 起動時確認
-            var task = getServer().getScheduler().runTaskLaterAsynchronously(
-                this,
-                () -> v.check(Bukkit.getConsoleSender()),
-                20 * 30
-            );
-            destructor.addFirst(task::cancel);
-
-            // ログイン時チェック
-            var e = v.new LoginChecker();
-            getServer().getPluginManager().registerEvents(e, this);
-            destructor.addFirst(() -> HandlerList.unregisterAll(e));
-        } else {
-            checker = ignore -> {};
-        }
-
         // スレッド
         var executor = Executors.newSingleThreadScheduledExecutor();
         executor.submit(() -> Thread.currentThread().setName("ebifly-timer"));
@@ -143,7 +121,7 @@ public class PluginMain extends JavaPlugin {
         }
 
         // コマンド
-        var command = new FlyCommand(this, config, message, repository, economy, checker, this::reload);
+        var command = new FlyCommand(this, config, message, repository, economy, this::reload);
         var fly = Objects.requireNonNull(getServer().getPluginCommand("fly"));
         fly.setExecutor(command);
         fly.setTabCompleter(command);

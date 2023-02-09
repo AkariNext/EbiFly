@@ -27,7 +27,6 @@ public class FlyCommand implements TabExecutor {
     private final FlyRepository fly;
     private final VaultEconomy economy;
 
-    private final Consumer<CommandSender> checker;
     private final BiConsumer<CommandSender, Consumer<CommandSender>> reload;
 
     private final PluginDescriptionFile description;
@@ -40,12 +39,11 @@ public class FlyCommand implements TabExecutor {
 
     public FlyCommand(PluginMain plugin, MainConfig config, BukkitLocale<MessageConfig> message,
                       FlyRepository fly, VaultEconomy economy,
-                      Consumer<CommandSender> checker, BiConsumer<CommandSender, Consumer<CommandSender>> reload) {
+                      BiConsumer<CommandSender, Consumer<CommandSender>> reload) {
         this.message = message;
         this.fly = fly;
         this.economy = economy;
 
-        this.checker = checker;
         this.reload = reload;
 
         this.description = plugin.getDescription();
@@ -257,14 +255,12 @@ public class FlyCommand implements TabExecutor {
         }
         sender.sendMessage(MessageConfig.PREFIX + description.getName() + " - " + description.getVersion());
         sender.sendMessage(MessageConfig.PREFIX + Objects.requireNonNull(description.getDescription()));
-        sender.sendMessage(MessageConfig.PREFIX + "Developer: " + String.join(", ", description.getAuthors()));
-        sender.sendMessage(MessageConfig.PREFIX + "SourceCode: " + description.getWebsite());
+        sender.sendMessage(MessageConfig.PREFIX + "Developer: " + String.join(", ", description.getAuthors()) + " Modified by cronree-91");
         sender.sendMessage("%sLocale: %s (%s)".formatted(
             MessageConfig.PREFIX,
             message.get(sender).locale,
             sender instanceof Player p ? p.getLocale() : message.get().locale)
         );
-        checker.accept(sender);
     }
 
     private void help(CommandSender sender) {
