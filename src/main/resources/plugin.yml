@@ -4,7 +4,7 @@ version: "${project.version}"
 website: "${project.url}"
 author: "HimaJyun( https://jyn.jp/ )"
 description: "${project.description}"
-softdepend: [ "Vault" ]
+softdepend: [ "Vault", "PlaceholderAPI" ]
 api-version: "1.17"
 
 commands:

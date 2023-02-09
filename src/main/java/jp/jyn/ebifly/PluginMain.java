@@ -130,6 +130,11 @@ public class PluginMain extends JavaPlugin {
             f.setTabCompleter(this);
             f.setExecutor(this);
         });
+
+        // PlaceHolder
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new EbiflyPlaceholders(repository).register();
+        }
     }
 
     @Override

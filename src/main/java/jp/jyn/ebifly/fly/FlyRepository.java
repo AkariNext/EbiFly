@@ -104,6 +104,22 @@ public class FlyRepository implements EbiFly {
         return r;
     }
 
+    public int getTimeLeft(Player pl) {
+        int res = 0;
+
+        var v = flying.get(pl.getUniqueId());
+        var cs = v.credit;
+        for (Credit c : cs) {
+            var i = c.minute.get();
+            if (i > 0) {
+                res += i;
+                continue;
+            }
+        }
+
+        return res;
+    }
+
     private void persistTimer(Player player) {
         var v = flying.get(player.getUniqueId());
         if (v == null) {
