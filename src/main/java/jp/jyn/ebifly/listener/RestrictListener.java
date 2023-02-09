@@ -61,7 +61,7 @@ public class RestrictListener implements Listener {
         var p = e.getPlayer();
         if (fly.isFlying(p)) {
             // リスポーン(死亡、エンドからの飛行)時はflyが解ける
-            if (p.hasPermission("ebifly.restrict.respawn")) {
+            if (p.hasPermission("fly.restrict.respawn")) {
                 p.setAllowFlight(true); // なのでもう一度飛べるように
             } else {
                 fly.stopRefund(p); // なので停止する
@@ -73,7 +73,7 @@ public class RestrictListener implements Listener {
     public final void onPlayerChangedWorld(PlayerChangedWorldEvent e) {
         // 世界変更時はflyはそのまま
         var p = e.getPlayer();
-        if (p.hasPermission("ebifly.restrict.world")) {
+        if (p.hasPermission("fly.restrict.world")) {
             if (fly.isFlying(p)) { // テレポートで移動すると止まるので入れ直す
                 p.setAllowFlight(true);
             }
@@ -92,7 +92,7 @@ public class RestrictListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public final void onPlayerGameModeChange(PlayerGameModeChangeEvent e) {
         var p = e.getPlayer();
-        if (p.hasPermission("ebifly.restrict.gamemode")) {
+        if (p.hasPermission("fly.restrict.gamemode")) {
             // 飛べないモードに切り替えると落とされる(サバイバル<->アドベンチャー間でも)
             if (!isFlightMode(e.getNewGameMode()) && fly.isFlying(p)) {
                 syncCall.accept(() -> p.setAllowFlight(true)); // ので、再度有効化してあげる
@@ -113,7 +113,7 @@ public class RestrictListener implements Listener {
         }
 
         var p = (Player) e.getEntity();
-        if (p.hasPermission("ebifly.restrict.levitation")) {
+        if (p.hasPermission("fly.restrict.levitation")) {
             return;
         }
 
@@ -148,7 +148,7 @@ public class RestrictListener implements Listener {
         }
 
         var p = (Player) e.getEntity();
-        if (p.hasPermission("ebifly.restrict.water")) {
+        if (p.hasPermission("fly.restrict.water")) {
             return;
         }
 

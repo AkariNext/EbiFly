@@ -157,7 +157,7 @@ public class FlyRepository implements EbiFly {
         var m = message.get(player).payment;
         syncCall.accept(() -> {
             // 支払い不要
-            if (player.hasPermission("ebifly.free")) {
+            if (player.hasPermission("fly.free")) {
                 cs.addLast(new Credit(0, 1, null));
                 return;
             }

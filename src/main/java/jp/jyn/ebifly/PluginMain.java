@@ -157,7 +157,7 @@ public class PluginMain extends JavaPlugin {
     }
 
     private void reload(CommandSender sender, Consumer<CommandSender> permissionError) {
-        if (!sender.hasPermission("ebifly.reload")) {
+        if (!sender.hasPermission("fly.reload")) {
             permissionError.accept(sender);
             return;
         }

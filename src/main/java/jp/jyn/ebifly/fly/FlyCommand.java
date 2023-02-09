@@ -139,7 +139,7 @@ public class FlyCommand implements TabExecutor {
             }
         }
         if (restrictLevitation != null
-            && !recipient.hasPermission("ebifly.restrict.levitation")
+            && !recipient.hasPermission("fly.restrict.levitation")
             && recipient.getPotionEffect(PotionEffectType.LEVITATION) != null) { // 浮遊中なら飛ばさない
             message.get(sender).flyUnavailable.apply().send(sender);
             return true;
@@ -149,7 +149,7 @@ public class FlyCommand implements TabExecutor {
     }
 
     private void persistFly(Player player) {
-        if (unavailable(player, player, "ebifly.fly.self")) {
+        if (unavailable(player, player, "fly.fly.self")) {
             return;
         }
 
@@ -157,7 +157,7 @@ public class FlyCommand implements TabExecutor {
         OfflinePlayer payer;
         Consumer<Player> notice;
         var l = message.get(player);
-        if (isEconomyEnable() && !player.hasPermission("ebifly.free")) {
+        if (isEconomyEnable() && !player.hasPermission("fly.free")) {
             var v = ComponentVariable.init().put("price", () -> economy.format(this.price));
             if (!economy.withdraw(player, this.price)) {
                 l.payment.insufficient.accept(player, v);
@@ -182,14 +182,14 @@ public class FlyCommand implements TabExecutor {
 
     private void addCredit(CommandSender sender, Player recipient, int minute) {
         boolean self = sender.equals(recipient);
-        if (unavailable(sender, recipient, self ? "ebifly.fly.self" : "ebifly.fly.other")) {
+        if (unavailable(sender, recipient, self ? "fly.fly.self" : "fly.fly.other")) {
             return;
         }
 
         Player payer = sender instanceof Player p ? p : null;
         var p = price;
         if (isEconomyEnable() && payer != null
-            && !payer.hasPermission("ebifly.free") && !recipient.hasPermission("ebifly.free")) {
+            && !payer.hasPermission("fly.free") && !recipient.hasPermission("fly.free")) {
             var l = message.get(payer).payment;
             var v = ComponentVariable.init().put("price", economy.format(p * minute));
             if (!economy.withdraw(payer, p * minute)) {
@@ -249,7 +249,7 @@ public class FlyCommand implements TabExecutor {
     }
 
     private void version(CommandSender sender) {
-        if (!sender.hasPermission("ebifly.version")) {
+        if (!sender.hasPermission("fly.version")) {
             message.get(sender).permissionError.apply().send(sender);
             return;
         }
@@ -266,10 +266,10 @@ public class FlyCommand implements TabExecutor {
     private void help(CommandSender sender) {
         var m = message.get(sender).help;
         m.fly.apply().send(sender);
-        if (sender.hasPermission("ebifly.version")) {
+        if (sender.hasPermission("fly.version")) {
             m.version.apply().send(sender);
         }
-        if (sender.hasPermission("ebifly.reload")) {
+        if (sender.hasPermission("fly.reload")) {
             m.reload.apply().send(sender);
         }
         m.help.apply().send(sender);
@@ -279,14 +279,14 @@ public class FlyCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             List<String> l = new ArrayList<>(2);
-            if ("version".startsWith(args[0]) && sender.hasPermission("ebifly.version")) {
+            if ("version".startsWith(args[0]) && sender.hasPermission("fly.version")) {
                 l.add("version");
             }
-            if ("reload".startsWith(args[0]) && sender.hasPermission("ebifly.reload")) {
+            if ("reload".startsWith(args[0]) && sender.hasPermission("fly.reload")) {
                 l.add("reload");
             }
             return l;
-        } else if (args.length == 2 && sender.hasPermission("ebifly.other")) {
+        } else if (args.length == 2 && sender.hasPermission("fly.other")) {
             try {
                 Integer.parseInt(args[0]);
                 return null; // nullを返せばプレイヤー一覧にマッチする

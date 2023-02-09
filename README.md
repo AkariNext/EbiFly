@@ -33,10 +33,10 @@ Simple 3-step installation.
 
 |Command|Description|Permission|Default|
 |:------|:----------|:----------|:-----|
-|/fly|(in Flight) Disable fly.<br>(not Flying) Enable persistant fly.|ebifly.fly.self|ALL|
-|/fly [minute] [player]|Fly for the specified time.<br>(If player is specified) Flight the player.|ebifly.fly.self<br>ebifly.fly.other|ALL|
-|/fly version|Checking plugin version.|ebifly.version|OP|
-|/fly reload|Reloading plugin config.|ebifly.reload|OP|
+|/fly|(in Flight) Disable fly.<br>(not Flying) Enable persistant fly.|fly.fly.self|ALL|
+|/fly [minute] [player]|Fly for the specified time.<br>(If player is specified) Flight the player.|fly.fly.self<br>fly.fly.other|ALL|
+|/fly version|Checking plugin version.|fly.version|OP|
+|/fly reload|Reloading plugin config.|fly.reload|OP|
 |/fly help|Show command help.|N/A|ALL|
 
 ## Restrict permission
@@ -45,11 +45,11 @@ Enabled when allowed (set to `true`), Disabled when denied (set to` false`).
 
 |Permission|Description|Default|
 |:---------|:----------|:------|
-|ebifly.restrict.respawn|(Enable) Continue flying after respawn.<br>(Disable) Stop flying after respawn.|Enable|
-|ebifly.restrict.world|(Enable) Continue flying after change the world.<br>(Disable) Stop flying after change the world.|Enable|
-|ebifly.restrict.gamemode|(Enable) Continue flying after switching game modes.<br>(Disable) Stop flying after switching game modes.|Disable|
-|ebifly.restrict.levitation|(Enable) Continue flying after receiving a levitation debuff.<br>(Disable) Stop flying after receiving a levitation debuff.|OP only Enable|
-|ebifly.restrict.water|(Enable) Continue flying after entering the water.<br>(Disable) Stop flying after entering the water.|OP only Enable|
+|fly.restrict.respawn|(Enable) Continue flying after respawn.<br>(Disable) Stop flying after respawn.|Enable|
+|fly.restrict.world|(Enable) Continue flying after change the world.<br>(Disable) Stop flying after change the world.|Enable|
+|fly.restrict.gamemode|(Enable) Continue flying after switching game modes.<br>(Disable) Stop flying after switching game modes.|Disable|
+|fly.restrict.levitation|(Enable) Continue flying after receiving a levitation debuff.<br>(Disable) Stop flying after receiving a levitation debuff.|OP only Enable|
+|fly.restrict.water|(Enable) Continue flying after entering the water.<br>(Disable) Stop flying after entering the water.|OP only Enable|
 
 This feature can also be setting in `config.yml`.
 
@@ -57,12 +57,12 @@ This feature can also be setting in `config.yml`.
 
 |Permission|Description|Default|
 |:---------|:----------|:------|
-|ebifly.free|Free for flight.|OP|
-|ebifly.fly.*|Include following permissions:<br>ebifly.fly.self<br>ebifly.fly.other|N/A|
-|ebifly.restrict.*|Include following permissions:<br>ebifly.restrict.respawn<br>ebifly.restrict.world<br>ebifly.restrict.gamemode<br>ebifly.restrict.levitation<br>ebifly.restrict.water|N/A|
-|ebifly.op|Include following permissions:<br>ebifly.free<br>ebifly.version<br>ebifly.reload<br>ebifly.restrict.water<br>ebifly.restrict.levitation|N/A|
-|ebifly.user|Include following permissions:<br>ebifly.fly.self<br>ebifly.fly.other<br>ebifly.restrict.respawn<br>ebifly.restrict.world<br>|N/A|
-|ebifly.*|Include all permissions.|N/A|
+|fly.free|Free for flight.|OP|
+|fly.fly.*|Include following permissions:<br>fly.fly.self<br>fly.fly.other|N/A|
+|fly.restrict.*|Include following permissions:<br>ifly.restrict.respawn<br>fly.restrict.world<br>fly.restrict.gamemode<br>fly.restrict.levitation<br>fly.restrict.water|N/A|
+|fly.op|Include following permissions:<br>fly.free<br>fly.version<br>fly.reload<br>fly.restrict.water<br>fly.restrict.levitation|N/A|
+|fly.user|Include following permissions:<br>fly.fly.self<br>fly.fly.other<br>fly.restrict.respawn<br>fly.restrict.world<br>|N/A|
+|fly.*|Include all permissions.|N/A|
 
 # Configuration
 

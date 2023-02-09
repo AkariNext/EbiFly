@@ -30,10 +30,10 @@ EbiFlyはBukkit用の経済機能付きFlyプラグインです。
 
 |コマンド|説明|権限|デフォルト|
 |:-------|:---|:---|:---------|
-|/fly|(飛行中) 飛行を無効にします。<br>(歩行中) 無限飛行を有効にします。|ebifly.fly.self|全員|
-|/fly [時間] [プレイヤー]|指定した時間飛行します。(分単位)<br>(プレイヤーを指定した場合) プレイヤーを飛行させます。|ebifly.fly.self<br>ebifly.fly.other|全員|
-|/fly version|プラグインのバージョンを確認します。|ebifly.version|OP|
-|/fly reload|プラグインをリロードします。|ebifly.reload|OP|
+|/fly|(飛行中) 飛行を無効にします。<br>(歩行中) 無限飛行を有効にします。|fly.fly.self|全員|
+|/fly [時間] [プレイヤー]|指定した時間飛行します。(分単位)<br>(プレイヤーを指定した場合) プレイヤーを飛行させます。|fly.fly.self<br>fly.fly.other|全員|
+|/fly version|プラグインのバージョンを確認します。|fly.version|OP|
+|/fly reload|プラグインをリロードします。|fly.reload|OP|
 |/fly help|ヘルプを表示します。|N/A|全員|
 
 ## 制限機能の権限
@@ -42,16 +42,16 @@ EbiFlyはBukkit用の経済機能付きFlyプラグインです。
 
 |権限|説明|デフォルト|
 |:---|:---|:---------|
-|ebifly.restrict.respawn|(有効) リスポーン時に飛行を継続します。<br>(無効) リスポーン時に飛行を停止します。|有効|
-|ebifly.restrict.world|(有効) 世界を移動した時に飛行を継続します。<br>(無効) 世界を移動した時に飛行を停止します。|有効|
-|ebifly.restrict.gamemode|(有効) ゲームモードを切り替えた時に飛行を継続します。<br>(無効) ゲームモードを切り替えた時に飛行を停止します。|無効|
-|ebifly.restrict.levitation|(有効) 浮遊のデバフを受けた時に飛行を継続します。<br>(無効) 浮遊のデバフを受けた時に飛行を停止します。|OPのみ有効|
-|ebifly.restrict.water|(有効) 水中に入った時に飛行を継続します。<br>(無効) 水中に入った時に飛行を無効にします。|OPのみ有効|
+|fly.restrict.respawn|(有効) リスポーン時に飛行を継続します。<br>(無効) リスポーン時に飛行を停止します。|有効|
+|fly.restrict.world|(有効) 世界を移動した時に飛行を継続します。<br>(無効) 世界を移動した時に飛行を停止します。|有効|
+|fly.restrict.gamemode|(有効) ゲームモードを切り替えた時に飛行を継続します。<br>(無効) ゲームモードを切り替えた時に飛行を停止します。|無効|
+|fly.restrict.levitation|(有効) 浮遊のデバフを受けた時に飛行を継続します。<br>(無効) 浮遊のデバフを受けた時に飛行を停止します。|OPのみ有効|
+|fly.restrict.water|(有効) 水中に入った時に飛行を継続します。<br>(無効) 水中に入った時に飛行を無効にします。|OPのみ有効|
 
 この機能は`config.yml`の`restrict`でも設定できます。
 
 <!-- 説明しなくても試せば分かる。
-`ebifly.restrict.gamemode`は少し直感的ではない挙動をします。  
+`fly.restrict.gamemode`は少し直感的ではない挙動をします。  
 無効であればサバイバルからクリエイティブに切り替えた時に飛行が停止しますが、有効であればそのまま継続されます。(クリエイティブモードはそのままでも飛べるため、ここでいう「継続される」とは支払いや飛行時間のカウントが停止しないという意味です。)  
 これは、クリエイティブからサバイバルに戻した時にどうするべきかの設定を想定しているためです。-->
 
@@ -59,12 +59,12 @@ EbiFlyはBukkit用の経済機能付きFlyプラグインです。
 
 |権限|説明|デフォルト|
 |:---|:---|:---------|
-|ebifly.free|飛行にお金を消費しなくなります|OP|
-|ebifly.fly.*|次の権限を一括設定:<br>ebifly.fly.self<br>ebifly.fly.other|N/A|
-|ebifly.restrict.*|次の権限を一括設定:<br>ebifly.restrict.respawn<br>ebifly.restrict.world<br>ebifly.restrict.gamemode<br>ebifly.restrict.levitation<br>ebifly.restrict.water|N/A|
-|ebifly.op|次の権限を一括設定:<br>ebifly.free<br>ebifly.version<br>ebifly.reload<br>ebifly.restrict.water<br>ebifly.restrict.levitation|N/A|
-|ebifly.user|次の権限を一括設定:<br>ebifly.fly.self<br>ebifly.fly.other<br>ebifly.restrict.respawn<br>ebifly.restrict.world<br>|N/A|
-|ebifly.*|全ての権限を一括設定|N/A|
+|fly.free|飛行にお金を消費しなくなります|OP|
+|fly.fly.*|次の権限を一括設定:<br>fly.fly.self<br>fly.fly.other|N/A|
+|fly.restrict.*|次の権限を一括設定:<br>fly.restrict.respawn<br>fly.restrict.world<br>fly.restrict.gamemode<br>fly.restrict.levitation<br>ifly.restrict.water|N/A|
+|fly.op|次の権限を一括設定:<br>fly.free<br>fly.version<br>fly.reload<br>fly.restrict.water<br>fly.restrict.levitation|N/A|
+|fly.user|次の権限を一括設定:<br>fly.fly.self<br>fly.fly.other<br>ifly.restrict.respawn<br>fly.restrict.world<br>|N/A|
+|fly.*|全ての権限を一括設定|N/A|
 
 # 設定
 

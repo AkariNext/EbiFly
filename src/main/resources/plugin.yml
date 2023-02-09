@@ -13,65 +13,65 @@ commands:
     aliases: [ "ebifly" ]
 
 permissions:
-  ebifly.fly.self:
+  fly.fly.self:
     default: true
-  ebifly.fly.other:
+  fly.fly.other:
     default: true
-  ebifly.restrict.respawn:
+  fly.restrict.respawn:
     default: true
-  ebifly.restrict.world:
+  fly.restrict.world:
     default: true
-  ebifly.restrict.gamemode:
+  fly.restrict.gamemode:
     default: false
-  ebifly.restrict.levitation:
+  fly.restrict.levitation:
     default: op
-  ebifly.restrict.water:
+  fly.restrict.water:
     default: op
-  ebifly.free:
+  fly.free:
     default: op
-  ebifly.version:
+  fly.version:
     default: op
-  ebifly.reload:
+  fly.reload:
     default: op
-  ebifly.fly.*:
+  fly.fly.*:
     default: false
     children:
-      ebifly.fly.self: true
-      ebifly.fly.other: true
-  ebifly.restrict.*:
+      fly.fly.self: true
+      fly.fly.other: true
+  fly.restrict.*:
     default: false
     children:
-      ebifly.restrict.respawn: true
-      ebifly.restrict.world: true
-      ebifly.restrict.gamemode: true
-      ebifly.restrict.levitation: true
-      ebifly.restrict.water: true
-  ebifly.op:
+      fly.restrict.respawn: true
+      fly.restrict.world: true
+      fly.restrict.gamemode: true
+      fly.restrict.levitation: true
+      fly.restrict.water: true
+  fly.op:
     default: false
     children:
-      ebifly.free: true
-      ebifly.version: true
-      ebifly.reload: true
-      ebifly.restrict.water: true
-      ebifly.restrict.levitation: true
-  ebifly.user:
+      fly.free: true
+      fly.version: true
+      fly.reload: true
+      fly.restrict.water: true
+      fly.restrict.levitation: true
+  fly.user:
     default: false
     children:
-      ebifly.fly.self: true
-      ebifly.fly.other: true
-      ebifly.restrict.respawn: true
-      ebifly.restrict.world: true
-      #ebifly.restrict.gamemode: true
-  ebifly.*:
+      fly.fly.self: true
+      fly.fly.other: true
+      fly.restrict.respawn: true
+      fly.restrict.world: true
+      #fly.restrict.gamemode: true
+  fly.*:
     default: false
     children:
-      ebifly.fly.self: true
-      ebifly.fly.other: true
-      ebifly.restrict.respawn: true
-      ebifly.restrict.world: true
-      ebifly.restrict.gamemode: true
-      ebifly.restrict.water: true
-      ebifly.restrict.levitation: true
-      ebifly.free: true
-      ebifly.version: true
-      ebifly.reload: true
+      fly.fly.self: true
+      fly.fly.other: true
+      fly.restrict.respawn: true
+      fly.restrict.world: true
+      fly.restrict.gamemode: true
+      fly.restrict.water: true
+      fly.restrict.levitation: true
+      fly.free: true
+      fly.version: true
+      fly.reload: true
