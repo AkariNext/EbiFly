@@ -165,16 +165,9 @@ public class FlyRepository implements EbiFly {
                 economy.withdraw(player, price); // 踏み倒されても1分が精一杯なので要らない処理のような気はする
             }
 
-            // クレジット切れてる -> ｵｶﾈﾀﾞｰ!!
-            if (economy.withdraw(player, price)) {
-                // 支払い完了、ﾏｲﾄﾞｱﾘｰ
-                m.persist.accept(player, () -> economy.format(price));
-                cs.addLast(new Credit(price, 1, player));
-            } else {
-                // お金ないならｵﾁﾛｰ!
-                m.insufficient.accept(player, ComponentVariable.init().put("price", () -> economy.format(price)));
-                remove(player, true);
-            }
+            // お金ないならｵﾁﾛｰ!
+            m.insufficient.accept(player, ComponentVariable.init().put("price", () -> economy.format(price)));
+            remove(player, true);
         });
     }
 
