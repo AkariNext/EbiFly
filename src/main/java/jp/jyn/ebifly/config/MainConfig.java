@@ -55,9 +55,9 @@ public class MainConfig {
         safetyVoid = config.getBoolean("safety.void");
         safetyLava = config.getInt("safety.lava");
         safetyLevitation = config.getBoolean("safety.levitation");
-        safetyLimit = TimeParser.parse(config.getString("safety.limit", "0"), TimeUnit.NANOSECONDS);
-        safetyCleanup = TimeParser.parse(config.getString("safety.cleanup", "0"), TimeUnit.NANOSECONDS);
-        safetySave = TimeParser.parse(config.getString("safety.save", "0"), TimeUnit.SECONDS);
+        safetyLimit = TimeParser.parse("0s", TimeUnit.NANOSECONDS);
+        safetyCleanup = TimeParser.parse("1d12h", TimeUnit.NANOSECONDS);
+        safetySave = TimeParser.parse("12h", TimeUnit.SECONDS);
 
         localeEnable = config.getBoolean("locale.enable");
         localeDefault = Objects.requireNonNull(config.getString("locale.default"), "locale.default is null");

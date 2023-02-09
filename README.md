@@ -92,9 +92,6 @@ safety:
   void: true
   lava: 30
   levitation: false
-  limit: 0s
-  cleanup: 1d12h
-  save: 12h
 ```
 
 `lava`の単位は秒です。
