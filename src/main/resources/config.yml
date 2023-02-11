@@ -28,6 +28,13 @@ economy:
   price: 500 # per minute price
   refund: true # true/false/payer (Hint: 'payer' is refund to payer)
 
+time_left:
+  bossbar: true
+
+fly:
+  default: 1
+  disable-world: ".+_nether"
+
 notice:
   enable:
     particle:

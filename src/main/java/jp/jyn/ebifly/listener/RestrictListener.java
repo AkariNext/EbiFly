@@ -59,7 +59,7 @@ public class RestrictListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public final void onPlayerRespawn(PlayerRespawnEvent e) {
         var p = e.getPlayer();
-        if (fly.isFlying(p)) {
+        if (fly.isFlying(p) && !fly.flying.get(p.getUniqueId()).isTemporaryStop()) {
             // リスポーン(死亡、エンドからの飛行)時はflyが解ける
             if (p.hasPermission("fly.restrict.respawn")) {
                 p.setAllowFlight(true); // なのでもう一度飛べるように
@@ -76,6 +76,11 @@ public class RestrictListener implements Listener {
         if (p.hasPermission("fly.restrict.world")) {
             if (fly.isFlying(p)) { // テレポートで移動すると止まるので入れ直す
                 p.setAllowFlight(true);
+            }
+            if (fly.isFlyDisabledWorld(e.getPlayer().getWorld().getName())) { // Flyが禁止されているワールドなら、一時的に止める
+                fly.stopFlyTemporary(e.getPlayer());
+            } else if (fly.isFlyDisabledWorld(e.getFrom().getName())) { // 一時的に止めたワールドから移動したら、再開する
+                fly.resumeFlyTemporary(e.getPlayer());
             }
         } else {
             fly.stopRefund(p); // なので権限がない時だけ停止する
@@ -94,7 +99,7 @@ public class RestrictListener implements Listener {
         var p = e.getPlayer();
         if (p.hasPermission("fly.restrict.gamemode")) {
             // 飛べないモードに切り替えると落とされる(サバイバル<->アドベンチャー間でも)
-            if (!isFlightMode(e.getNewGameMode()) && fly.isFlying(p)) {
+            if (!isFlightMode(e.getNewGameMode()) && fly.isFlying(p) && !fly.flying.get(p.getUniqueId()).isTemporaryStop()) {
                 syncCall.accept(() -> p.setAllowFlight(true)); // ので、再度有効化してあげる
                 // 1tickズラさないとダメ
             }
@@ -125,7 +130,7 @@ public class RestrictListener implements Listener {
                 fly.stopRefund(p);
                 levitationHandler.accept(p);
             }
-        } else {
+        } else if (!fly.flying.get(p.getUniqueId()).isTemporaryStop()){
             switch (e.getAction()) {
                 case ADDED -> {
                     if (!isFlightMode(p.getGameMode()) && fly.isFlying(p)) {

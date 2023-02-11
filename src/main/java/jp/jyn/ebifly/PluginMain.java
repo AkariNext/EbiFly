@@ -99,7 +99,7 @@ public class PluginMain extends JavaPlugin {
 
         // リポジトリ
         var repository = new FlyRepository(config, message, executor, economy,
-            syncCall, safety == null ? p -> {} : safety::add);
+            syncCall, safety == null ? p -> {} : safety::add, config.timeLeftBossbar, config.disableWorldRegex);
         destructor.addFirst(() -> getServer().getOnlinePlayers().forEach(repository::stopRefund)); // 全ユーザー飛行停止
         // ログアウト時の停止
         var quit = repository.new FlyQuitListener(safety == null ? p -> {} : safety::stopCount);

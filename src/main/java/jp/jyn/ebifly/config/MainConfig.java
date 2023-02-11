@@ -39,12 +39,15 @@ public class MainConfig {
 
     public final EconomyConfig economy;
 
+    public final boolean timeLeftBossbar;
+    public final int flyDefaultMin;
+    public final String disableWorldRegex;
+
     public final NoticeConfig noticeEnable;
     public final NoticeConfig noticeDisable;
     public final NoticeConfig noticeTimeout;
     public final int noticeTimeoutSecond;
     public final NoticePosition noticeTimeoutPosition;
-    public final NoticePosition noticePaymentPosition;
 
     public MainConfig(PluginMain plugin) {
         var logger = plugin.getLogger();
@@ -61,6 +64,10 @@ public class MainConfig {
 
         localeEnable = config.getBoolean("locale.enable");
         localeDefault = Objects.requireNonNull(config.getString("locale.default"), "locale.default is null");
+
+        timeLeftBossbar = config.getBoolean("time_left.bossbar");
+        flyDefaultMin = config.getInt("fly.default");
+        disableWorldRegex = config.getString("fly.disable-world");
 
         restrictRespawn = config.getBoolean("restrict.respawn");
         restrictWorld = config.getBoolean("restrict.world");
@@ -92,7 +99,6 @@ public class MainConfig {
         }
         noticeTimeoutSecond = Math.min(second, 60);
         noticeTimeoutPosition = pos(logger, config, "notice.timeout");
-        noticePaymentPosition = pos(logger, config, "notice.payment");
     }
 
     private static FileConfiguration loadConfig(Plugin plugin) {

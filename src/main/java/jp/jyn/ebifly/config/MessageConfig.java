@@ -131,7 +131,6 @@ public class MessageConfig {
     }
 
     public final static class PaymentMessage {
-        public final BiConsumer<Player, Supplier<String>> persist;
         public final BiConsumer<Player, ComponentVariable> persistP; // 常にプレフィックス持ち
         public final BiConsumer<Player, ComponentVariable> self;
         public final BiConsumer<Player, ComponentVariable> other;
@@ -142,7 +141,7 @@ public class MessageConfig {
 
         private PaymentMessage(ConfigurationSection config, MainConfig main) {
             UnaryOperator<String> s = k -> config.getString(k, null);
-            persist = cp(main.noticePaymentPosition, s.apply("persist"), "price");
+//            persist = cp(s.apply("persist"), "price");
             persistP = c(s.apply("persist"));
             self = c(s.apply("self"));
             other = c(s.apply("other"));

@@ -7,17 +7,20 @@ import jp.jyn.jbukkitlib.config.locale.BukkitLocale;
 import jp.jyn.jbukkitlib.config.parser.component.ComponentVariable;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Future;
@@ -27,9 +30,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.LongFunction;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class FlyRepository implements EbiFly {
-    private final Map<UUID, FlightStatus> flying = new ConcurrentHashMap<>();
+    public final Map<UUID, FlightStatus> flying = new ConcurrentHashMap<>();
 
     private final BukkitLocale<MessageConfig> message;
     private final ScheduledExecutorService executor;
@@ -43,9 +49,12 @@ public class FlyRepository implements EbiFly {
     private final Consumer<Player> noticeDisable;
     private final Consumer<Player> noticeTimeout;
 
+    boolean showBossbar;
+    Pattern pattern;
+
     public FlyRepository(MainConfig config, BukkitLocale<MessageConfig> message,
                          ScheduledExecutorService executor, VaultEconomy economy,
-                         Consumer<Runnable> syncCall, Consumer<Player> removeHandler) {
+                         Consumer<Runnable> syncCall, Consumer<Player> removeHandler, boolean showBossbar, String disabledWorldPattern) {
         this.message = message;
         this.executor = executor;
         this.economy = economy;
@@ -63,6 +72,14 @@ public class FlyRepository implements EbiFly {
 
         this.noticeDisable = config.noticeDisable.merge();
         this.noticeTimeout = config.noticeTimeout.merge();
+
+        this.showBossbar = showBossbar;
+
+        try {
+            this.pattern = Pattern.compile(disabledWorldPattern);
+        } catch (PatternSyntaxException ex) {
+            throw new IllegalArgumentException("フライ禁止ワールドの正規表現が間違っています。", ex);
+        }
     }
 
     private boolean isNotifyEnabled() {
@@ -75,6 +92,8 @@ public class FlyRepository implements EbiFly {
             return null;
         }
         r.cancelTimer();
+
+        r.bb.setVisible(false);
 
         // 引数を使わない事でラムダのインスタンスが無駄に作られないように
         final Consumer<Player> f = p -> {
@@ -104,19 +123,28 @@ public class FlyRepository implements EbiFly {
         return r;
     }
 
-    public int getTimeLeft(Player pl) {
+    public int getTimeLeft(FlightStatus fs) {
         int res = 0;
 
-        var v = flying.get(pl.getUniqueId());
-        var cs = v.credit;
+        var cs = fs.credit;
         for (Credit c : cs) {
             var i = c.minute.get();
             if (i > 0) {
                 res += i;
-                continue;
             }
         }
 
+        return res;
+    }
+
+    public int getTimeSum(FlightStatus fs) {
+        int res = 0;
+
+        var cs = fs.credit;
+        for (Credit c : cs) {
+            var i = c.boughtMinute;
+            res += i;
+        }
         return res;
     }
 
@@ -136,6 +164,7 @@ public class FlyRepository implements EbiFly {
             var i = credit.minute().decrementAndGet();
             if (i > 0) { // クレジット残ありなら返却して今周の消費は終わり
                 cs.addFirst(credit);
+                updateBossbar(v);
                 return;
             } else if (i == 0) {
                 // 取り出したクレジットが空になったら次の支払いへ
@@ -151,6 +180,7 @@ public class FlyRepository implements EbiFly {
             if (credit.minute().get() > 0) {
                 // まだあるみたいなので返却して終わり
                 cs.addFirst(credit);
+                updateBossbar(v);
                 return;
             }
         }
@@ -158,6 +188,7 @@ public class FlyRepository implements EbiFly {
         // 支払いが無効になってるなら何もせずにaddできる
         if (economy == null) {
             cs.addLast(new Credit(0, 1, null));
+            updateBossbar(v);
             return;
         }
 
@@ -173,6 +204,7 @@ public class FlyRepository implements EbiFly {
             // 支払い不要
             if (player.hasPermission("fly.free")) {
                 cs.addLast(new Credit(0, 1, null));
+                updateBossbar(v);
                 return;
             }
 
@@ -185,6 +217,24 @@ public class FlyRepository implements EbiFly {
             m.insufficient.accept(player, ComponentVariable.init().put("price", () -> economy.format(price)));
             remove(player, true);
         });
+    }
+
+    private void updateBossbar(FlightStatus fs) {
+        if (!showBossbar)
+            return;
+
+        int left = getTimeLeft(fs);
+        int sum = getTimeSum(fs);
+        Logger.getLogger(this.getClass().getName()).warning(left+"/"+sum);
+
+
+        fs.bb.setTitle("Fly残り時間: "+left+"分");
+        fs.bb.setProgress(1.0D-(((double) left) / ((double)sum)));
+        if (left > 0) {
+            fs.bb.setVisible(true);
+        } else {
+            fs.bb.setVisible(false);
+        }
     }
 
     private void stopTimer(Player player, boolean notify) {
@@ -214,6 +264,8 @@ public class FlyRepository implements EbiFly {
             // ズレが大きければコッソリ待つ的な処理があった方が良いかも？ ScheduledExecutorServiceの精度次第
             remove(player, true);
         }
+
+        updateBossbar(v);
     }
 
     @Override
@@ -254,13 +306,16 @@ public class FlyRepository implements EbiFly {
 
     @Override
     public boolean addCredit(Player player, double price, int minute, OfflinePlayer payer, boolean persist) {
-        var v = flying.computeIfAbsent(player.getUniqueId(), u -> new FlightStatus());
+        FlightStatus v = flying.computeIfAbsent(player.getUniqueId(), u -> new FlightStatus(player));
         v.credit.addLast(new Credit(price, minute, payer));
-        if (Bukkit.isPrimaryThread()) {
-            player.setAllowFlight(true);
-        } else {
-            syncCall.accept(() -> player.setAllowFlight(true));
-        }
+        if (!v.isTemporaryStop())
+            if (Bukkit.isPrimaryThread()) {
+                player.setAllowFlight(true);
+            } else {
+                syncCall.accept(() -> player.setAllowFlight(true));
+            }
+
+        updateBossbar(v);
 
         if (v.isTimerInitialized()) {
             // タイマーが動いてる -> 非persistの時だけタイマー入れ直す (persistはどのみち周期タイマーで消えていくので)
@@ -279,6 +334,38 @@ public class FlyRepository implements EbiFly {
             }
             return true;
         }
+
+
+    }
+
+    public void stopFlyTemporary(Player player) {
+        FlightStatus v = flying.get(player.getUniqueId());
+        if (v == null) {
+            return;
+        }
+        if (v.temporaryStop) {
+            return;
+        }
+
+        v.temporaryStop = true;
+        player.setAllowFlight(false);
+
+        player.sendMessage("§c一時的にフライを無効化しました。");
+    }
+
+    public void resumeFlyTemporary(Player player) {
+        FlightStatus v = flying.get(player.getUniqueId());
+        if (v == null) {
+            return;
+        }
+        if (!v.temporaryStop) {
+            return;
+        }
+
+        v.temporaryStop = false;
+        player.setAllowFlight(true);
+
+        player.sendMessage("§cフライを自動的に再開しました。");
     }
 
     // 飛んでなければ-1、十分なら0、不足していたら足りない数
@@ -292,6 +379,8 @@ public class FlyRepository implements EbiFly {
         int i = v.useCredit(minute);
         if (i == 0) {
             v.lastConsume.addAndGet(TimeUnit.MINUTES.toNanos(minute));
+
+            updateBossbar(v);
             return 0;
         } else if (i < 0) {
             throw new IllegalStateException("useCredit(int) return less 0");
@@ -301,6 +390,8 @@ public class FlyRepository implements EbiFly {
         v.lastConsume.addAndGet(-TimeUnit.MINUTES.toNanos(i));
         // もう飛べないので落とす
         remove(player, notice);
+
+        updateBossbar(v);
         return i;
     }
 
@@ -350,7 +441,11 @@ public class FlyRepository implements EbiFly {
         stopRefund(player, true);
     }
 
-    private static final class FlightStatus {
+    public boolean isFlyDisabledWorld(String worldName) {
+        return pattern.matcher(worldName).matches();
+    }
+
+    public static final class FlightStatus {
         private final AtomicLong lastConsume;
         private final Deque<Credit> credit;
 
@@ -358,13 +453,23 @@ public class FlyRepository implements EbiFly {
         private Future<?> timer = null;
         private volatile boolean persist = false;
 
-        private FlightStatus(AtomicLong lastConsume, Deque<Credit> credit) {
+        private BossBar bb;
+        private boolean temporaryStop = false;
+
+        private FlightStatus(Player pl, AtomicLong lastConsume, Deque<Credit> credit) {
             this.lastConsume = lastConsume;
             this.credit = credit;
+
+            Logger.getLogger(this.getClass().getName()).warning("create");
+            this.bb = Bukkit.createBossBar("Fly残り時間: 0分", BarColor.GREEN, BarStyle.SOLID);
+            this.bb.setProgress(0);
+            this.bb.addPlayer(pl);
+            this.bb.setVisible(false);
+
         }
 
-        private FlightStatus() {
-            this(new AtomicLong(System.nanoTime()), new ConcurrentLinkedDeque<>());
+        private FlightStatus(Player pl) {
+            this(pl, new AtomicLong(System.nanoTime()), new ConcurrentLinkedDeque<>());
         }
 
         private long getElapsed() {
@@ -392,6 +497,14 @@ public class FlyRepository implements EbiFly {
             synchronized (lock) {
                 return timer != null;
             }
+        }
+
+        public boolean isTemporaryStop() {
+            return temporaryStop;
+        }
+
+        public void setTemporaryStop(boolean temporaryStop) {
+            this.temporaryStop = temporaryStop;
         }
 
         private void reSchedule(LongFunction<Future<?>> scheduler) {
@@ -485,7 +598,7 @@ public class FlyRepository implements EbiFly {
         }
     }
 
-    private static final record Credit(double price, AtomicInteger minute, /*nullable*/ OfflinePlayer payer) {
+    private static final record Credit(double price, AtomicInteger minute, /*nullable*/ OfflinePlayer payer, Integer boughtMinute) {
         private Credit {
             if (Double.compare(price, 0.0) < 0) throw new IllegalArgumentException("price is negative"); // -0.0も弾く
             if (!Double.isFinite(price)) throw new IllegalArgumentException("price is not finite");
@@ -494,7 +607,7 @@ public class FlyRepository implements EbiFly {
         }
 
         private Credit(double price, int minute, OfflinePlayer payer) {
-            this(price, new AtomicInteger(minute), payer);
+            this(price, new AtomicInteger(minute), payer, minute);
         }
     }
 
@@ -507,10 +620,19 @@ public class FlyRepository implements EbiFly {
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
         public void onPlayerQuit(PlayerQuitEvent e) {
-            if (!FlyRepository.this.stopRefund(e.getPlayer(), false)) {
-                // falseの時 -> 既に削除された後疑惑があるのでquitHandlerを発動させる
-                quitHandler.accept(e.getPlayer());
-            }
+//            if (!FlyRepository.this.stopRefund(e.getPlayer(), false)) {
+//                // falseの時 -> 既に削除された後疑惑があるのでquitHandlerを発動させる
+//                quitHandler.accept(e.getPlayer());
+//            }
+            stopFlyTemporary(e.getPlayer());
         }
+
+        @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+        public void onPlayerJoin(PlayerJoinEvent e) {
+            World world = e.getPlayer().getWorld();
+            if (!isFlyDisabledWorld(world.getName()))
+                resumeFlyTemporary(e.getPlayer());
+        }
+
     }
 }

@@ -32,6 +32,7 @@ public class FlyCommand implements TabExecutor {
     private final PluginDescriptionFile description;
 
     private final double price;
+    private final int flyDefaultMin;
     private final Boolean restrictLevitation;
     private final Consumer<Player> noticeEnable;
     private final Consumer<Player> noticeEnablePaid;
@@ -46,6 +47,8 @@ public class FlyCommand implements TabExecutor {
         this.reload = reload;
 
         this.description = plugin.getDescription();
+
+        this.flyDefaultMin = config.flyDefaultMin;
 
         restrictLevitation = config.restrictLevitation;
         if (isEconomyEnable()) {
@@ -172,7 +175,7 @@ public class FlyCommand implements TabExecutor {
             notice = noticeEnable;
         }
 
-        if (fly.addCredit(player, price, 1, payer, true)) {
+        if (fly.addCredit(player, price, flyDefaultMin, payer, true)) {
             notice.accept(player);
             l.flyEnable.apply().send(player);
         }
