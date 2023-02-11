@@ -39,3 +39,6 @@ buildNumber.properties
 # === jetbrains ===
 .idea/
 *.iml
+
+
+server
