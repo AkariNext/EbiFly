@@ -225,7 +225,6 @@ public class FlyRepository implements EbiFly {
 
         int left = getTimeLeft(fs);
         int sum = getTimeSum(fs);
-        Logger.getLogger(this.getClass().getName()).warning(left+"/"+sum);
 
 
         fs.bb.setTitle("Fly残り時間: "+left+"分");
@@ -362,6 +361,8 @@ public class FlyRepository implements EbiFly {
             return;
         }
 
+        v.bb.addPlayer(player);
+
         v.temporaryStop = false;
         player.setAllowFlight(true);
 
@@ -460,7 +461,6 @@ public class FlyRepository implements EbiFly {
             this.lastConsume = lastConsume;
             this.credit = credit;
 
-            Logger.getLogger(this.getClass().getName()).warning("create");
             this.bb = Bukkit.createBossBar("Fly残り時間: 0分", BarColor.GREEN, BarStyle.SOLID);
             this.bb.setProgress(0);
             this.bb.addPlayer(pl);

@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class MessageConfig {
-    public final static String PREFIX = "[EbiFly] ";
+    public final static String PREFIX = "[Fly] ";
     public final static String PLAYER_ONLY = PREFIX + ChatColor.RED + "This command can only be run by players.";
 
     public final String locale;
@@ -47,7 +47,6 @@ public class MessageConfig {
         UnaryOperator<String> s = k -> {
             var v = config.getString(k);
             if (v == null || v.isEmpty()) {
-                plugin.getLogger().warning("%s is null or empty in locale/%s.yml".formatted(k, locale));
                 return "";
             }
             return v;

@@ -1,5 +1,5 @@
 main: "jp.jyn.ebifly.PluginMain"
-name: "EbiFly"
+name: "Fly"
 version: "${project.version}"
 website: "${project.url}"
 author: "HimaJyun( https://jyn.jp/ )"
